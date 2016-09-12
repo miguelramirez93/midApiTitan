@@ -135,16 +135,18 @@ func (c *NominaController) GetAll() {
 func (this *NominaController) Put() {
 	idStr := this.Ctx.Input.Param(":id")
 	var data models.Nomina
-	var respuesta map[string]interface{}
+	var respuesta string
 	err := json.Unmarshal(this.Ctx.Input.RequestBody, &data)
 	if err != nil {
 		beego.Debug("error: ", err)
-		respuesta = map[string]interface{}{"Mensaje": "No se recibieron los datos correctamente"}
+		respuesta = "No se recibieron los datos correctamente"
 		this.Data["json"] = respuesta
 		this.ServeJSON()
 	}
-	sendJson("http://"+beego.AppConfig.String("Urlcrud")+":"+beego.AppConfig.String("Portcrud")+"/"+beego.AppConfig.String("Nscrud")+"/nomina/"+idStr,"PUT",&respuesta ,&data)
-
+	err2 := sendJson("http://"+beego.AppConfig.String("Urlcrud")+":"+beego.AppConfig.String("Portcrud")+"/"+beego.AppConfig.String("Nscrud")+"/nomina/"+idStr,"PUT",&respuesta ,&data)
+	if(err2 != nil){
+		beego.Debug("error: ", err2)
+	}
 	this.Data["json"] = respuesta
 	this.ServeJSON()
 }
@@ -157,7 +159,7 @@ func (this *NominaController) Put() {
 // @router /:id [delete]
 func (this *NominaController) Delete() {
 	id := this.Ctx.Input.Param(":id")
-	var respuesta map[string]interface{}
+	var respuesta string
 	sendJson("http://"+beego.AppConfig.String("Urlcrud")+":"+beego.AppConfig.String("Portcrud")+"/"+beego.AppConfig.String("Nscrud")+"/nomina/"+id,"DELETE",&respuesta ,nil)
 	this.Data["json"] = respuesta
 	this.ServeJSON()

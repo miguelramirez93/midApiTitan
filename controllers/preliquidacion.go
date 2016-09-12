@@ -193,11 +193,11 @@ func (c *PreliquidacionController) GetAll() {
 func (this *PreliquidacionController) Put() {
 	idStr := this.Ctx.Input.Param(":id")
 	var data models.Preliquidacion
-	var respuesta map[string]interface{}
+	var respuesta string
 	err := json.Unmarshal(this.Ctx.Input.RequestBody, &data)
 	if err != nil {
 		beego.Debug("error: ", err)
-		respuesta = map[string]interface{}{"Mensaje": "No se recibieron los datos correctamente"}
+		respuesta =  "No se recibieron los datos correctamente"
 	}
 	sendJson("http://"+beego.AppConfig.String("Urlcrud")+":"+beego.AppConfig.String("Portcrud")+"/"+beego.AppConfig.String("Nscrud")+"/preliquidacion/"+idStr,"PUT",&respuesta ,&data)
 	this.Data["json"] = respuesta
@@ -212,7 +212,7 @@ func (this *PreliquidacionController) Put() {
 // @router /:id [delete]
 func (this *PreliquidacionController) Delete() {
 	id := this.Ctx.Input.Param(":id")
-	var respuesta map[string]interface{}
+	var respuesta string
 	sendJson("http://"+beego.AppConfig.String("Urlcrud")+":"+beego.AppConfig.String("Portcrud")+"/"+beego.AppConfig.String("Nscrud")+"/preliquidacion/"+id,"DELETE",&respuesta ,nil)
 	this.Data["json"] = respuesta
 	this.ServeJSON()
