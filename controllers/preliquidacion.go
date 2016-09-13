@@ -26,8 +26,6 @@ func (c *PreliquidacionController) URLMapping() {
 
 //generar la preliquidacion
 func (this *PreliquidacionController) Generar() {
-
-	
 	var postnomina string = ""
 	var postdominio string = ""
 	if tnomina  := c.GetString("tnomina"); tnomina != "" {
