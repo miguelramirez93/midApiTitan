@@ -26,13 +26,23 @@ func (c *PreliquidacionController) URLMapping() {
 
 //generar la preliquidacion
 func (this *PreliquidacionController) Generar() {
+
+	
+	var postnomina string = ""
+	var postdominio string = ""
+	if tnomina  := c.GetString("tnomina"); tnomina != "" {
+			postnomina = postnomina +"&query=TipoContrato:"+tnomina
+	}
+	if tdominio  := c.GetString("tnomina"); tdominio != "" {
+			postdominio = postdominio +"&query=Id:"+tdominio
+	}
 	var v []models.Predicado
 	var datos_contrato []models.ContratoGeneral
 	var predicados []models.Predicado
-	if err := getJson("http://"+beego.AppConfig.String("Urlruler")+":"+beego.AppConfig.String("Portruler")+"/"+beego.AppConfig.String("Nsruler")+"/predicado?limit=0", &v); err == nil {
+	if err := getJson("http://"+beego.AppConfig.String("Urlruler")+":"+beego.AppConfig.String("Portruler")+"/"+beego.AppConfig.String("Nsruler")+"/predicado?limit=0"+postdominio, &v); err == nil {
 		//Tomar del json el nombre de la regla y guardarlo en arregloReglas
 
-		if err := getJson("http://"+beego.AppConfig.String("Urlcrud")+":"+beego.AppConfig.String("Portcrud")+"/"+beego.AppConfig.String("Nscrud")+"/contrato_general?limit=0", &datos_contrato); err == nil {
+		if err := getJson("http://"+beego.AppConfig.String("Urlcrud")+":"+beego.AppConfig.String("Portcrud")+"/"+beego.AppConfig.String("Nscrud")+"/contrato_general?limit=0"+postnomina, &datos_contrato); err == nil {
 			var reglas string = ""
 			var reglasbase string = ""
 			var reglasinyectadas string = ""
