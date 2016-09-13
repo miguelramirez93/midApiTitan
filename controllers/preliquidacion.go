@@ -28,10 +28,10 @@ func (c *PreliquidacionController) URLMapping() {
 func (this *PreliquidacionController) Generar() {
 	var postnomina string = ""
 	var postdominio string = ""
-	if tnomina  := c.GetString("tnomina"); tnomina != "" {
-			postnomina = postnomina +"&query=TipoContrato:"+tnomina
+	if tnomina  := this.GetString("tnomina"); tnomina != "" {
+			postnomina = postnomina +"&query=TipoContrato.Id:"+tnomina
 	}
-	if tdominio  := c.GetString("tnomina"); tdominio != "" {
+	if tdominio  := this.GetString("tdominio"); tdominio != "" {
 			postdominio = postdominio +"&query=Id:"+tdominio
 	}
 	var v []models.Predicado
