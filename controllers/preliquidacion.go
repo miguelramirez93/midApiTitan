@@ -36,6 +36,7 @@ func (this *PreliquidacionController) Generar() {
 	}
 	var v []models.Predicado
 	var datos_contrato []models.ContratoGeneral
+	var datos_novedades []models.DetalleNovedad
 	var predicados []models.Predicado
 	if err := getJson("http://"+beego.AppConfig.String("Urlruler")+":"+beego.AppConfig.String("Portruler")+"/"+beego.AppConfig.String("Nsruler")+"/predicado?limit=0"+postdominio, &v); err == nil {
 		//Tomar del json el nombre de la regla y guardarlo en arregloReglas
@@ -56,6 +57,12 @@ func (this *PreliquidacionController) Generar() {
 			}
 
 			for i := 0; i < len(datos_contrato); i++ {
+				//solicitud de informacion de novedades de cada empleado
+				if err := getJson("http://"+beego.AppConfig.String("Urlcrud")+":"+beego.AppConfig.String("Portcrud")+"/"+beego.AppConfig.String("Nscrud")+"/detalle_novedad?limit=0&query=Persona:"+datos_contrato[i].Contratista.NumDocumento, &datos_novedades); err == nil {
+						if(datos_novedades != nil){
+								predicados = append(predicados,models.Predicado{Nombre:"factor('"+datos_contrato[i].Contratista.NomProveedor+"',"+"descuento,"+datos_novedades[0]+")."} )
+							} //regla de descuentos
+				}
 				predicados = append(predicados,models.Predicado{Nombre:"categoria('"+datos_contrato[i].Contratista.NomProveedor+"',"+"asociado)."} )
 				predicados = append(predicados,models.Predicado{Nombre:"vinculacion('"+datos_contrato[i].Contratista.NomProveedor+"',"+"hc)."} )
 				predicados = append(predicados,models.Predicado{Nombre:"horas('"+datos_contrato[i].Contratista.NomProveedor+"',"+"4500)."} )
