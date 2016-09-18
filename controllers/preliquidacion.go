@@ -2,11 +2,11 @@ package controllers
 
 import (
 	"encoding/json"
-
 	models "github.com/miguelramirez93/midApiTitan/models"
 	"github.com/miguelramirez93/midApiTitan/golog"
-
+	"strconv"
 	"github.com/astaxie/beego"
+	//"fmt"
 )
 
 // oprations for Preliquidacion
@@ -57,16 +57,15 @@ func (this *PreliquidacionController) Generar() {
 			}
 
 			for i := 0; i < len(datos_contrato); i++ {
-				//solicitud de informacion de novedades de cada empleado
-				if err := getJson("http://"+beego.AppConfig.String("Urlcrud")+":"+beego.AppConfig.String("Portcrud")+"/"+beego.AppConfig.String("Nscrud")+"/detalle_novedad?limit=0&query=Persona:"+datos_contrato[i].Contratista.NumDocumento, &datos_novedades); err == nil {
+				//solicitud de informacion de novedades de cada empleado si esta activa la novedad
+				if err := getJson("http://"+beego.AppConfig.String("Urlcrud")+":"+beego.AppConfig.String("Portcrud")+"/"+beego.AppConfig.String("Nscrud")+"/detalle_novedad?limit=0&query=Estado:Activo,Persona:"+strconv.FormatFloat(datos_contrato[i].Contratista.NumDocumento, 'f', -1, 64), &datos_novedades); err == nil {
 						if(datos_novedades != nil){
-								predicados = append(predicados,models.Predicado{Nombre:"factor('"+datos_contrato[i].Contratista.NomProveedor+"',"+"descuento,"+datos_novedades[0]+")."} )
+								predicados = append(predicados,models.Predicado{Nombre:"factor('"+datos_contrato[i].Contratista.NomProveedor+"',"+"descuento,"+datos_novedades[0].Novedad.TipoNovedad+",'"+datos_novedades[0].Novedad.Nombre+"',"+strconv.FormatFloat(datos_novedades[0].Valor, 'f', -1, 64)+","+strconv.Itoa(datos_novedades[0].Vigencia)+")."} )
 							} //regla de descuentos
 				}
-				predicados = append(predicados,models.Predicado{Nombre:"categoria('"+datos_contrato[i].Contratista.NomProveedor+"',"+"asociado)."} )
-				predicados = append(predicados,models.Predicado{Nombre:"vinculacion('"+datos_contrato[i].Contratista.NomProveedor+"',"+"hc)."} )
-				predicados = append(predicados,models.Predicado{Nombre:"horas('"+datos_contrato[i].Contratista.NomProveedor+"',"+"4500)."} )
-				predicados = append(predicados,models.Predicado{Nombre:"duracion_contrato('"+datos_contrato[i].Contratista.NomProveedor+"',"+"1)."} )
+
+				predicados = append(predicados,models.Predicado{Nombre:"valor_contrato('"+datos_contrato[i].Contratista.NomProveedor+"',"+strconv.FormatFloat(datos_contrato[i].ValorContrato, 'f', -1, 64)+")."} )
+				predicados = append(predicados,models.Predicado{Nombre:"duracion_contrato('"+datos_contrato[i].Contratista.NomProveedor+"',6,2016)."} )
 				var arregloReglasInyectadas = make([]string, len(predicados))
 				for i := 0; i < len(predicados); i++ {
 					arregloReglasInyectadas[i] = predicados[i].Nombre
@@ -75,9 +74,11 @@ func (this *PreliquidacionController) Generar() {
 					reglasinyectadas = reglasinyectadas + arregloReglasInyectadas[i]
 				}
 				reglas = reglasinyectadas+reglasbase
-				temp := golog.CargarReglas(reglas)
-				respuesta = append(respuesta,models.FormatoPreliqu{Contrato: &datos_contrato[i], Respuesta: &temp[1]} )
+				//fmt.Print("Reglas: "+reglas)
+				temp := golog.CargarReglas(reglas,"2016")
+				respuesta = append(respuesta,models.FormatoPreliqu{Contrato: &datos_contrato[i], Respuesta: &temp[0]} )
 				predicados = nil;
+				datos_novedades = nil
 				reglasinyectadas = ""
 			}
 			this.Data["json"] = respuesta
