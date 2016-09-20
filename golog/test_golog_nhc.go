@@ -46,9 +46,7 @@ func CargarReglas(reglas string, periodo string) (rest []models.Respuesta) {
     miArreglo[control].Novedades = fmt.Sprintf("%s", solution.ByName_("L"))
     miArreglo[control].Retenciones = fmt.Sprintf("%s", solution.ByName_("L2"))
 
-    fmt.Print("Pago a: "+miArreglo[control].Nombre_Cont)
-    fmt.Print("Val bruto: "+miArreglo[control].Valor_bruto)
-    fmt.Print("Val neto: "+miArreglo[control].Valor_neto)
+
     control++
   }
 
