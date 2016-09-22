@@ -6,6 +6,7 @@ type Respuesta struct {
 	Novedades  string
 	Retenciones  string
 	Valor_neto  string
+	Descuentos *[]Descuentos
 }
 type FormatoPreliqu struct {
 	Contrato   *ContratoGeneral

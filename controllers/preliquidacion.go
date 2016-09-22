@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"github.com/astaxie/beego"
 
-	
 )
 
 // oprations for Preliquidacion
@@ -29,16 +28,25 @@ func (c *PreliquidacionController) URLMapping() {
 func (this *PreliquidacionController) Generar() {
 	var postnomina string = ""
 	var postdominio string = ""
+	var preliquidacion string = ""
 	if tnomina  := this.GetString("tnomina"); tnomina != "" {
 			postnomina = postnomina +"&query=TipoContrato.Id:"+tnomina
 	}
 	if tdominio  := this.GetString("tdominio"); tdominio != "" {
 			postdominio = postdominio +"&query=Id:"+tdominio
 	}
+	if tpreliquidacion  := this.GetString("preliquidacion"); tpreliquidacion != "" {
+			preliquidacion = tpreliquidacion
+	}else{
+		this.Data["json"] = map[string]interface{}{"Mensaje": "falta id de la preliquidacion"}
+		this.ServeJSON()
+	}
 	var v []models.Predicado
 	var datos_contrato []models.ContratoGeneral
 	var datos_novedades []models.DetalleNovedad
 	var predicados []models.Predicado
+	var idDetaPre int
+	var res map[string]interface{}
 	if err := getJson("http://"+beego.AppConfig.String("Urlruler")+":"+beego.AppConfig.String("Portruler")+"/"+beego.AppConfig.String("Nsruler")+"/predicado?limit=0"+postdominio, &v); err == nil {
 		//Tomar del json el nombre de la regla y guardarlo en arregloReglas
 
@@ -59,7 +67,7 @@ func (this *PreliquidacionController) Generar() {
 
 			for i := 0; i < len(datos_contrato); i++ {
 				//solicitud de informacion de novedades de cada empleado si esta activa la novedad
-				if err := getJson("http://"+beego.AppConfig.String("Urlcrud")+":"+beego.AppConfig.String("Portcrud")+"/"+beego.AppConfig.String("Nscrud")+"/detalle_novedad?limit=0&query=Estado:Activo,Persona:"+strconv.FormatFloat(datos_contrato[i].Contratista.NumDocumento, 'f', -1, 64), &datos_novedades); err == nil {
+				if err := getJson("http://"+beego.AppConfig.String("Urlcrud")+":"+beego.AppConfig.String("Portcrud")+"/"+beego.AppConfig.String("Nscrud")+"/detalle_novedad?limit=0&query=Estado:Activo,Persona:"+strconv.FormatInt(datos_contrato[i].Contratista.NumDocumento,10), &datos_novedades); err == nil {
 						if(datos_novedades != nil){
 								predicados = append(predicados,models.Predicado{Nombre:"factor('"+datos_contrato[i].Contratista.NomProveedor+"',"+"descuento,"+datos_novedades[0].Novedad.TipoNovedad+",'"+datos_novedades[0].Novedad.Nombre+"',"+strconv.FormatFloat(datos_novedades[0].Valor, 'f', -1, 64)+","+strconv.Itoa(datos_novedades[0].Vigencia)+")."} )
 							} //regla de descuentos
@@ -80,6 +88,39 @@ func (this *PreliquidacionController) Generar() {
 				reglas = reglasinyectadas+reglasbase
 				//fmt.Print("Reglas: "+reglas)
 				temp := golog.CargarReglas(reglas,"2016")
+				Vneto,_ := strconv.ParseFloat(temp[0].Valor_neto,32)
+				Idpreliqu ,_ := strconv.Atoi(preliquidacion)
+				pl :=  models.Preliquidacion{Id: Idpreliqu}
+				detallepreliqu := models.DetallePreliquidacion{Persona: datos_contrato[i].Contratista.NumDocumento, Valor : Vneto, Preliquidacion : &pl }
+				if err := sendJson("http://"+beego.AppConfig.String("Urlcrud")+":"+beego.AppConfig.String("Portcrud")+"/"+beego.AppConfig.String("Nscrud")+"/detalle_preliquidacion","POST",&idDetaPre ,&detallepreliqu); err == nil {
+
+				}else{
+					beego.Debug("error: ", err)
+					this.Data["json"] = map[string]interface{}{"Mensaje": "error al guaradar el detalle"}
+					this.ServeJSON()
+				}
+				for _, descuentos := range *temp[0].Descuentos {
+			    descuentos.DetallePreliquidacion = &models.DetallePreliquidacion{Id: idDetaPre}
+					if err := sendJson("http://"+beego.AppConfig.String("Urlcrud")+":"+beego.AppConfig.String("Portcrud")+"/"+beego.AppConfig.String("Nscrud")+"/descuentos","POST",&res ,descuentos); err == nil {
+
+					}else{
+						beego.Debug("error: ", err)
+						this.Data["json"] = map[string]interface{}{"Mensaje": "error al guaradar descuentos"}
+						this.ServeJSON()
+					}
+			  }
+				if(datos_novedades != nil){
+					for _, novedades_aplicadas := range datos_novedades {
+						nov := models.NovedadAplicada{DetallePreliquidacion: &models.DetallePreliquidacion{Id: idDetaPre},DetalleNovedad: &novedades_aplicadas}
+						if err := sendJson("http://"+beego.AppConfig.String("Urlcrud")+":"+beego.AppConfig.String("Portcrud")+"/"+beego.AppConfig.String("Nscrud")+"/novedad_aplicada","POST",&res ,nov); err == nil {
+
+						}else{
+							beego.Debug("error: ", err)
+							this.Data["json"] = map[string]interface{}{"Mensaje": "error al guaradar descuentos"}
+							this.ServeJSON()
+						}
+					}
+				}
 				respuesta = append(respuesta,models.FormatoPreliqu{Contrato: &datos_contrato[i], Respuesta: &temp[0]} )
 				predicados = nil;
 				datos_novedades = nil

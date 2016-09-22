@@ -1,9 +1,9 @@
 package models
 
-
 type DetallePreliquidacion struct {
-	Id       int       `pk;orm:"column(preliquidacion)"`
-	Persona  int64     `orm:"column(persona)"`
-	Valor    float32   `orm:"column(valor)"`
-	Concepto *Concepto `orm:"column(concepto);rel(fk)"`
+	Preliquidacion *Preliquidacion `orm:"column(preliquidacion);rel(fk)"`
+	Persona        int64           `orm:"column(persona)"`
+	Valor          float64         `orm:"column(valor)"`
+	Concepto       *Concepto       `orm:"column(concepto);rel(fk)"`
+	Id             int             `orm:"column(id);pk"`
 }
