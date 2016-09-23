@@ -31,7 +31,7 @@ type ContratoGeneral struct {
 	Contratista                  *InformacionProveedor             `orm:"column(contratista);rel(fk)"`
 	NombreContratista            string           `orm:"column(nombre_contratista);null"`
 	UnidadEjecucion              *Parametros      `orm:"column(unidad_ejecucion);rel(fk);null"`
-	ValorContrato                float64             `orm:"column(valor_contrato);null"`
+	ValorContrato                string             `orm:"column(valor_contrato);null"`
 	Estado                       int              `orm:"column(estado);null"`
 	Justificacion                string           `orm:"column(justificacion);null"`
 	DescripcionFormaPago         string           `orm:"column(descripcion_forma_pago);null"`

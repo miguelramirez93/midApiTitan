@@ -6,7 +6,7 @@ import (
 	"github.com/miguelramirez93/midApiTitan/golog"
 	"strconv"
 	"github.com/astaxie/beego"
-
+	//"fmt"
 )
 
 // oprations for Preliquidacion
@@ -76,7 +76,7 @@ func (this *PreliquidacionController) Generar() {
 				a,m,_,_,_,_ := diff(datos_contrato[i].FechaInicio,datos_contrato[i].FechaFinal)
 				meses_contrato := (a*12)+m
 
-				predicados = append(predicados,models.Predicado{Nombre:"valor_contrato('"+datos_contrato[i].Contratista.NomProveedor+"',"+strconv.FormatFloat(datos_contrato[i].ValorContrato, 'f', -1, 64)+")."} )
+				predicados = append(predicados,models.Predicado{Nombre:"valor_contrato('"+datos_contrato[i].Contratista.NomProveedor+"',"+datos_contrato[i].ValorContrato+")."} )
 				predicados = append(predicados,models.Predicado{Nombre:"duracion_contrato('"+datos_contrato[i].Contratista.NomProveedor+"',"+strconv.Itoa(meses_contrato)+",2016)."} )
 				var arregloReglasInyectadas = make([]string, len(predicados))
 				for i := 0; i < len(predicados); i++ {
@@ -89,6 +89,8 @@ func (this *PreliquidacionController) Generar() {
 				//fmt.Print("Reglas: "+reglas)
 				temp := golog.CargarReglas(reglas,"2016")
 				Vneto,_ := strconv.ParseFloat(temp[0].Valor_neto,32)
+
+				//fmt.Print(" total: "+strconv.FormatFloat(datos_contrato[i].ValorContrato, 'f', 6, 64))
 				Idpreliqu ,_ := strconv.Atoi(preliquidacion)
 				pl :=  models.Preliquidacion{Id: Idpreliqu}
 				detallepreliqu := models.DetallePreliquidacion{Persona: datos_contrato[i].Contratista.NumDocumento, Valor : Vneto, Preliquidacion : &pl }
