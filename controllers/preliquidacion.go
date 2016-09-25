@@ -33,7 +33,7 @@ func (this *PreliquidacionController) Generar() {
 			postnomina = postnomina +"&query=TipoContrato.Id:"+tnomina
 	}
 	if tdominio  := this.GetString("tdominio"); tdominio != "" {
-			postdominio = postdominio +"&query=Id:"+tdominio
+			postdominio = postdominio +"&query=Dominio.Id:"+tdominio
 	}
 	if tpreliquidacion  := this.GetString("preliquidacion"); tpreliquidacion != "" {
 			preliquidacion = tpreliquidacion
@@ -46,7 +46,7 @@ func (this *PreliquidacionController) Generar() {
 	var datos_novedades []models.DetalleNovedad
 	var predicados []models.Predicado
 	var idDetaPre int
-	var res map[string]interface{}
+	var res interface{}
 	if err := getJson("http://"+beego.AppConfig.String("Urlruler")+":"+beego.AppConfig.String("Portruler")+"/"+beego.AppConfig.String("Nsruler")+"/predicado?limit=0"+postdominio, &v); err == nil {
 		//Tomar del json el nombre de la regla y guardarlo en arregloReglas
 
@@ -88,7 +88,7 @@ func (this *PreliquidacionController) Generar() {
 				reglas = reglasinyectadas+reglasbase
 				//fmt.Print("Reglas: "+reglas)
 				temp := golog.CargarReglas(reglas,"2016")
-				Vneto,_ := strconv.ParseFloat(temp[0].Valor_neto,32)
+				Vneto := temp[0].Valor_neto
 
 				//fmt.Print(" total: "+strconv.FormatFloat(datos_contrato[i].ValorContrato, 'f', 6, 64))
 				Idpreliqu ,_ := strconv.Atoi(preliquidacion)
@@ -123,7 +123,7 @@ func (this *PreliquidacionController) Generar() {
 						}
 					}
 				}
-				respuesta = append(respuesta,models.FormatoPreliqu{Contrato: &datos_contrato[i], Respuesta: &temp[0]} )
+				respuesta = append(respuesta,models.FormatoPreliqu{Respuesta: &temp[0]} )
 				predicados = nil;
 				datos_novedades = nil
 				reglasinyectadas = ""

@@ -9,6 +9,6 @@ type Respuesta struct {
 	Descuentos *[]Descuentos
 }
 type FormatoPreliqu struct {
-	Contrato   *ContratoGeneral
+	//Contrato   *ContratoGeneral
 	Respuesta *Respuesta
 }
