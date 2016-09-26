@@ -93,7 +93,8 @@ func (this *PreliquidacionController) Generar() {
 				//fmt.Print(" total: "+strconv.FormatFloat(datos_contrato[i].ValorContrato, 'f', 6, 64))
 				Idpreliqu ,_ := strconv.Atoi(preliquidacion)
 				pl :=  models.Preliquidacion{Id: Idpreliqu}
-				detallepreliqu := models.DetallePreliquidacion{Persona: datos_contrato[i].Contratista.NumDocumento, Valor : Vneto, Preliquidacion : &pl }
+				persona :=  models.InformacionProveedor{NumDocumento:datos_contrato[i].Contratista.NumDocumento}
+				detallepreliqu := models.DetallePreliquidacion{Persona: &persona, Valor : Vneto, Preliquidacion : &pl }
 				if err := sendJson("http://"+beego.AppConfig.String("Urlcrud")+":"+beego.AppConfig.String("Portcrud")+"/"+beego.AppConfig.String("Nscrud")+"/detalle_preliquidacion","POST",&idDetaPre ,&detallepreliqu); err == nil {
 
 				}else{
