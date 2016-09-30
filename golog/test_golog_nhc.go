@@ -53,7 +53,7 @@ func CargarReglas(reglas string, periodo string) (rest []models.Respuesta) {
     control++
   }
   control = 0
-  descuentos := m.ProveAll("retencion(X,Y,"+periodo+",B,N).")
+  descuentos := m.ProveAll("descuento_ley(X,Y,"+periodo+",B,N).")
   var lista_descuentos = make([]models.Descuentos, len(descuentos))
   for _, solution := range descuentos {
     Base,_ := strconv.ParseFloat(fmt.Sprintf("%s", solution.ByName_("B")), 64)
