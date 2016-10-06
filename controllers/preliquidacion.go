@@ -291,7 +291,10 @@ func (this *PreliquidacionController) Liquidacion() {
 	pdf2 := gofpdf.New("P", "mm", "A4", "")
 	err := json.Unmarshal(this.Ctx.Input.RequestBody, &data)
 	if err != nil {
-		fmt.Println(err)
+		beego.Debug("error: ", err)
+		respuesta :=  "No se recibieron los datos correctamente"
+		this.Data["json"] = respuesta
+		this.ServeJSON()
 	}
 
 	pdf.AddPage()
