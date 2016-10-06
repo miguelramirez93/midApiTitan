@@ -22,6 +22,7 @@ func (c *PreliquidacionController) URLMapping() {
 	c.Mapping("Put", c.Put)
 	c.Mapping("Delete", c.Delete)
 	c.Mapping("Generar", c.Generar)
+	c.Mapping("Liquidacion", c.Liquidacion)
 }
 
 
@@ -57,7 +58,7 @@ func (this *PreliquidacionController) Generar() {
 			var reglasinyectadas string = ""
 			var arregloReglas = make([]string, len(v))
 
-			var respuesta []models.FormatoPreliqu
+			//var respuesta []models.FormatoPreliqu
 			for i := 0; i < len(v); i++ {
 				arregloReglas[i] = v[i].Nombre
 			}
@@ -125,12 +126,12 @@ func (this *PreliquidacionController) Generar() {
 						}
 					}
 				}
-				respuesta = append(respuesta,models.FormatoPreliqu{Respuesta: &temp[0]} )
+				//respuesta = append(respuesta,models.FormatoPreliqu{Respuesta: &temp[0]} )
 				predicados = nil;
 				datos_novedades = nil
 				reglasinyectadas = ""
 			}
-			this.Data["json"] = respuesta
+			this.Data["json"] = map[string]interface{}{"Mensaje": "Preliquidacion generada correctamente"}
 			this.ServeJSON()
 		} else {
 			beego.Debug("error: ", err)
