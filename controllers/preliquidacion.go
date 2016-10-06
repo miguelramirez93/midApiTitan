@@ -6,6 +6,7 @@ import (
 	"github.com/miguelramirez93/midApiTitan/golog"
 	"strconv"
 	"github.com/astaxie/beego"
+	"github.com/jung-kurt/gofpdf"
 	//"fmt"
 )
 
@@ -280,4 +281,185 @@ func (this *PreliquidacionController) Delete() {
 	sendJson("http://"+beego.AppConfig.String("Urlcrud")+":"+beego.AppConfig.String("Portcrud")+"/"+beego.AppConfig.String("Nscrud")+"/preliquidacion/"+id,"DELETE",&respuesta ,nil)
 	this.Data["json"] = respuesta
 	this.ServeJSON()
+}
+
+//funcion de generacion para pdf
+
+func (this *PreliquidacionController) Liquidacion() {
+	var data []models.DetallePreliquidacion
+	pdf := gofpdf.New("P", "mm", "A4", "")
+	pdf2 := gofpdf.New("P", "mm", "A4", "")
+	err := json.Unmarshal(this.Ctx.Input.RequestBody, &data)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	pdf.AddPage()
+//	pdf.Image(example.ImageFile("logo.png"), 10, 6, 30, 0, false, "", 0, "")
+
+	pdf.SetFont("Arial", "B", 16)
+/*
+	for i:=0 ; i<4 ; i++ {
+		pdf.CellFormat(120, 7, "dato", "1", 0, "", false, 0, "")
+}
+pdf.Ln(-1)
+for i:=0 ;i<4 ;i++ {
+		pdf.CellFormat(120, 6, "ioo", "1", 0, "", false, 0, "")
+		pdf.CellFormat(120, 6, "iooi", "1", 0, "", false, 0, "")
+		pdf.Ln(-1)
+}*/
+//	pdf.Image(example.ImageFile("logo.png"), 10, 10, 30, 0, false, "", 0, "")
+//	pdf.Ln(20)
+
+	pdf.Cell(70, 10, "DETALLE DE PAGOS")
+	pdf.Ln(20)
+	pdf.SetFont("Arial", "", 14)
+
+	pdf.CellFormat(70, 10, "Nombre Proveeedor", "1", 0, "", false, 0, "")
+	pdf.CellFormat(120, 10,data[0].Persona.NomProveedor, "1", 0, "", false, 0, "")
+	pdf.Ln(-1)
+
+	pdf.CellFormat(70, 10, "Numero Documento", "1", 0, "", false, 0, "")
+	pdf.CellFormat(120, 10,strconv.FormatInt(data[0].Persona.NumDocumento ,10), "1", 0, "", false, 0, "")
+	pdf.Ln(-1)
+
+	pdf.CellFormat(70, 10,"Periodo de nomina", "1", 0, "", false, 0, "")
+	pdf.CellFormat(120, 10,data[0].Preliquidacion.Nomina.Periodo, "1", 0, "", false, 0, "")
+	pdf.Ln(-1)
+
+	pdf.CellFormat(70, 10, "Id preliquidacion", "1", 0, "", false, 0, "")
+	pdf.CellFormat(120, 10,strconv.Itoa(data[0].Preliquidacion.Id), "1", 0, "", false, 0, "")
+	pdf.Ln(-1)
+
+	pdf.CellFormat(70, 10,"Nombre preliquidacion", "1", 0, "", false, 0, "")
+	pdf.CellFormat(120, 10,data[0].Preliquidacion.Nombre, "1", 0, "", false, 0, "")
+	pdf.Ln(-1)
+
+	pdf.CellFormat(70, 10,"Id nomina", "1", 0, "", false, 0, "")
+	pdf.CellFormat(120, 10,strconv.Itoa(data[0].Preliquidacion.Nomina.Id), "1", 0, "", false, 0, "")
+	pdf.Ln(-1)
+
+	pdf.CellFormat(70, 10,"Vinculacion", "1", 0, "", false, 0, "")
+	pdf.CellFormat(120, 10,strconv.Itoa(data[0].Preliquidacion.Nomina.Vinculacion), "1", 0, "", false, 0, "")
+	pdf.Ln(-1)
+
+	pdf.CellFormat(70, 10,"Nomina", "1", 0, "", false, 0, "")
+	pdf.CellFormat(120, 10,data[0].Preliquidacion.Nomina.Nombre, "1", 0, "", false, 0, "")
+	pdf.Ln(-1)
+
+	pdf.CellFormat(70, 10,"Descripcion nomina", "1", 0, "", false, 0, "")
+	pdf.CellFormat(120, 10,data[0].Preliquidacion.Nomina.Descripcion, "1", 0, "", false, 0, "")
+	pdf.Ln(-1)
+
+	pdf.CellFormat(70, 10,"Tipo nomina", "1", 0, "", false, 0, "")
+	pdf.CellFormat(120, 10,data[0].Preliquidacion.Nomina.TipoNomina, "1", 0, "", false, 0, "")
+	pdf.Ln(-1)
+
+	pdf.CellFormat(70, 10,"Estado de nomina", "1", 0, "", false, 0, "")
+	pdf.CellFormat(120, 10,data[0].Preliquidacion.Nomina.Estado, "1", 0, "", false, 0, "")
+	pdf.Ln(-1)
+
+	pdf.CellFormat(70, 10,"Id usuario", "1", 0, "", false, 0, "")
+	pdf.CellFormat(120, 10,strconv.FormatInt(data[0].Preliquidacion.IdUsuario,10), "1", 0, "", false, 0, "")
+	pdf.Ln(-1)
+
+	pdf.CellFormat(70, 10,"Preliquidacion estado", "1", 0, "", false, 0, "")
+	pdf.CellFormat(120, 10,data[0].Preliquidacion.Estado, "1", 0, "", false, 0, "")
+	pdf.Ln(-1)
+
+	pdf.CellFormat(70, 10,"Preliquidacion descripcion", "1", 0, "", false, 0, "")
+	pdf.CellFormat(120, 10,data[0].Preliquidacion.Descripcion, "1", 0, "", false, 0, "")
+	pdf.Ln(-1)
+
+	pdf.CellFormat(70, 10, "Valor", "1", 0, "", false, 0, "")
+	pdf.CellFormat(120, 10,data[0].Valor, "1", 0, "", false, 0, "")
+	pdf.Ln(-1)
+
+	pdf2.AddPage()
+pdf2.SetFont("Arial", "B", 16)
+		pdf2.Cell(70, 10, "ORDEN DE PAGO")
+		pdf2.Ln(20)
+		pdf2.SetFont("Arial", "", 14)
+
+		pdf2.CellFormat(70, 10, "Nombre Proveeedor", "1", 0, "", false, 0, "")
+		pdf2.CellFormat(120, 10,data[0].Persona.NomProveedor, "1", 0, "", false, 0, "")
+		pdf2.Ln(-1)
+
+		pdf2.CellFormat(70, 10, "Numero Documento", "1", 0, "", false, 0, "")
+		pdf2.CellFormat(120, 10,strconv.FormatInt(data[0].Persona.NumDocumento ,10), "1", 0, "", false, 0, "")
+		pdf2.Ln(-1)
+
+		pdf2.CellFormat(70, 10, "Direccion", "1", 0, "", false, 0, "")
+		pdf2.CellFormat(120, 10,data[0].Persona.Direccion, "1", 0, "", false, 0, "")
+		pdf2.Ln(-1)
+
+		pdf2.CellFormat(70, 10, "Entidad bancaria", "1", 0, "", false, 0, "")
+		pdf2.CellFormat(120, 10,strconv.FormatFloat(data[0].Persona.IdEntidadBancaria,'g',1,64), "1", 0, "", false, 0, "")
+		pdf2.Ln(-1)
+
+		pdf2.CellFormat(70, 10, "Tipo cuenta", "1", 0, "", false, 0, "")
+		pdf2.CellFormat(120, 10,data[0].Persona.TipoCuentaBancaria, "1", 0, "", false, 0, "")
+		pdf2.Ln(-1)
+
+		pdf2.CellFormat(70, 10, "Numero cuenta", "1", 0, "", false, 0, "")
+		pdf2.CellFormat(120, 10,data[0].Persona.NumCuentaBancaria, "1", 0, "", false, 0, "")
+		pdf2.Ln(-1)
+
+		pdf2.CellFormat(70, 10,"Periodo de nomina", "1", 0, "", false, 0, "")
+		pdf2.CellFormat(120, 10,data[0].Preliquidacion.Nomina.Periodo, "1", 0, "", false, 0, "")
+		pdf2.Ln(-1)
+
+		pdf2.CellFormat(70, 10, "Id preliquidacion", "1", 0, "", false, 0, "")
+		pdf2.CellFormat(120, 10,strconv.Itoa(data[0].Preliquidacion.Id), "1", 0, "", false, 0, "")
+		pdf2.Ln(-1)
+
+		pdf2.CellFormat(70, 10,"Nombre preliquidacion", "1", 0, "", false, 0, "")
+		pdf2.CellFormat(120, 10,data[0].Preliquidacion.Nombre, "1", 0, "", false, 0, "")
+		pdf2.Ln(-1)
+
+		pdf2.CellFormat(70, 10,"Id nomina", "1", 0, "", false, 0, "")
+		pdf2.CellFormat(120, 10,strconv.Itoa(data[0].Preliquidacion.Nomina.Id), "1", 0, "", false, 0, "")
+		pdf2.Ln(-1)
+
+		pdf2.CellFormat(70, 10,"Vinculacion", "1", 0, "", false, 0, "")
+		pdf2.CellFormat(120, 10,strconv.Itoa(data[0].Preliquidacion.Nomina.Vinculacion), "1", 0, "", false, 0, "")
+		pdf2.Ln(-1)
+
+		pdf2.CellFormat(70, 10,"Nomina", "1", 0, "", false, 0, "")
+		pdf2.CellFormat(120, 10,data[0].Preliquidacion.Nomina.Nombre, "1", 0, "", false, 0, "")
+		pdf2.Ln(-1)
+
+		pdf2.CellFormat(70, 10,"Descripcion nomina", "1", 0, "", false, 0, "")
+		pdf2.CellFormat(120, 10,data[0].Preliquidacion.Nomina.Descripcion, "1", 0, "", false, 0, "")
+		pdf2.Ln(-1)
+
+		pdf2.CellFormat(70, 10,"Tipo nomina", "1", 0, "", false, 0, "")
+		pdf2.CellFormat(120, 10,data[0].Preliquidacion.Nomina.TipoNomina, "1", 0, "", false, 0, "")
+		pdf2.Ln(-1)
+
+		pdf2.CellFormat(70, 10,"Estado de nomina", "1", 0, "", false, 0, "")
+		pdf2.CellFormat(120, 10,data[0].Preliquidacion.Nomina.Estado, "1", 0, "", false, 0, "")
+		pdf2.Ln(-1)
+
+		pdf2.CellFormat(70, 10,"Id usuario", "1", 0, "", false, 0, "")
+		pdf2.CellFormat(120, 10,strconv.FormatInt(data[0].Preliquidacion.IdUsuario,10), "1", 0, "", false, 0, "")
+		pdf2.Ln(-1)
+
+		pdf2.CellFormat(70, 10,"Preliquidacion estado", "1", 0, "", false, 0, "")
+		pdf2.CellFormat(120, 10,data[0].Preliquidacion.Estado, "1", 0, "", false, 0, "")
+		pdf2.Ln(-1)
+
+		pdf2.CellFormat(70, 10,"Preliquidacion descripcion", "1", 0, "", false, 0, "")
+		pdf2.CellFormat(120, 10,data[0].Preliquidacion.Descripcion, "1", 0, "", false, 0, "")
+		pdf2.Ln(-1)
+
+		pdf2.CellFormat(70, 10, "Valor", "1", 0, "", false, 0, "")
+		pdf2.CellFormat(120, 10,data[0].Valor, "1", 0, "", false, 0, "")
+		pdf2.Ln(-1)
+//	pdf.Cell(0, 10,t.Format(data[0].Preliquidacion.Fecha)) //(time)
+	//pdf.Cell(0, 10,Time.String(data[0].Preliquidacion.FechaFin))//(time)
+	//pdf.Cell(0, 10,Time.String(data[0].Preliquidacion.FechaInicio)) //(time)
+	pdf2.OutputFileAndClose("ordenpago.pdf")
+	pdf.OutputFileAndClose("detalle.pdf")
+
 }
