@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"github.com/astaxie/beego"
 	"github.com/jung-kurt/gofpdf"
-	//"fmt"
 )
 
 // oprations for Preliquidacion
@@ -75,11 +74,11 @@ func (this *PreliquidacionController) Generar() {
 							} //regla de descuentos
 				}
 
-				a,m,_,_,_,_ := diff(datos_contrato[i].FechaInicio,datos_contrato[i].FechaFinal)
-				meses_contrato := (a*12)+m
-
+				a,m,d := diff(datos_contrato[i].FechaInicio,datos_contrato[i].FechaFinal)
+				var meses_contrato float64
+				meses_contrato = (float64(a*12))+float64(m)+(float64(d)/30)
 				predicados = append(predicados,models.Predicado{Nombre:"valor_contrato('"+datos_contrato[i].Contratista.NomProveedor+"',"+datos_contrato[i].ValorContrato+")."} )
-				predicados = append(predicados,models.Predicado{Nombre:"duracion_contrato('"+datos_contrato[i].Contratista.NomProveedor+"',"+strconv.Itoa(meses_contrato)+",2016)."} )
+				predicados = append(predicados,models.Predicado{Nombre:"duracion_contrato('"+datos_contrato[i].Contratista.NomProveedor+"',"+strconv.FormatFloat(meses_contrato, 'f', -1, 64)+",2016)."} )
 				var arregloReglasInyectadas = make([]string, len(predicados))
 				for i := 0; i < len(predicados); i++ {
 					arregloReglasInyectadas[i] = predicados[i].Nombre
