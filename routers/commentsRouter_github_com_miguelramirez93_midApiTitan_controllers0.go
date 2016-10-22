@@ -21,5 +21,11 @@ func init() {
 	    `/Liquidacion`,
 	    []string{"post"},
 	    nil})
+		beego.GlobalControllerRouter["github.com/miguelramirez93/midApiTitan/controllers:PruebasController"] = append(beego.GlobalControllerRouter["github.com/miguelramirez93/midApiTitan/controllers:PruebasController"],
+	  beego.ControllerComments{
+	    "Preliquidacion",
+	    `/preliquidacion`,
+	    []string{"get"},
+	    nil})
 
 }
