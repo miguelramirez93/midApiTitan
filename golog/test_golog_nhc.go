@@ -46,8 +46,8 @@ func CargarReglas(reglas string, periodo string) (rest []models.Respuesta) {
       miArreglo[control].Valor_neto = fmt.Sprintf("%.3f", Neto)
     miArreglo[control].Nombre_Cont = fmt.Sprintf("%s", solution.ByName_("X"))
     miArreglo[control].Valor_bruto  = fmt.Sprintf("%.3f", Bruto)
-    miArreglo[control].Novedades = fmt.Sprintf("%s", solution.ByName_("L"))
-    miArreglo[control].Retenciones = fmt.Sprintf("%s", solution.ByName_("L2"))
+    //miArreglo[control].Novedades = fmt.Sprintf("%s", solution.ByName_("L"))
+    //miArreglo[control].Retenciones = fmt.Sprintf("%s", solution.ByName_("L2"))
 
 
     control++
