@@ -6,6 +6,41 @@ import (
 
 func init() {
 
+	beego.GlobalControllerRouter["github.com/miguelramirez93/midApiTitan/controllers:CategoriaNovedadController"] = append(beego.GlobalControllerRouter["github.com/miguelramirez93/midApiTitan/controllers:CategoriaNovedadController"],
+		beego.ControllerComments{
+			"Post",
+			`/`,
+			[]string{"post"},
+			nil})
+
+	beego.GlobalControllerRouter["github.com/miguelramirez93/midApiTitan/controllers:CategoriaNovedadController"] = append(beego.GlobalControllerRouter["github.com/miguelramirez93/midApiTitan/controllers:CategoriaNovedadController"],
+		beego.ControllerComments{
+			"GetOne",
+			`/:id`,
+			[]string{"get"},
+			nil})
+
+	beego.GlobalControllerRouter["github.com/miguelramirez93/midApiTitan/controllers:CategoriaNovedadController"] = append(beego.GlobalControllerRouter["github.com/miguelramirez93/midApiTitan/controllers:CategoriaNovedadController"],
+		beego.ControllerComments{
+			"GetAll",
+			`/`,
+			[]string{"get"},
+			nil})
+
+	beego.GlobalControllerRouter["github.com/miguelramirez93/midApiTitan/controllers:CategoriaNovedadController"] = append(beego.GlobalControllerRouter["github.com/miguelramirez93/midApiTitan/controllers:CategoriaNovedadController"],
+		beego.ControllerComments{
+			"Put",
+			`/:id`,
+			[]string{"put"},
+			nil})
+
+	beego.GlobalControllerRouter["github.com/miguelramirez93/midApiTitan/controllers:CategoriaNovedadController"] = append(beego.GlobalControllerRouter["github.com/miguelramirez93/midApiTitan/controllers:CategoriaNovedadController"],
+		beego.ControllerComments{
+			"Delete",
+			`/:id`,
+			[]string{"delete"},
+			nil})
+
 	beego.GlobalControllerRouter["github.com/miguelramirez93/midApiTitan/controllers:ContratoGeneralController"] = append(beego.GlobalControllerRouter["github.com/miguelramirez93/midApiTitan/controllers:ContratoGeneralController"],
 		beego.ControllerComments{
 			"Post",

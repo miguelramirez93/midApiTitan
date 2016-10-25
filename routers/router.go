@@ -75,6 +75,11 @@ func init() {
 				&controllers.ContratoGeneralController{},
 			),
 		),
+		beego.NSNamespace("/categoria_novedad",
+			beego.NSInclude(
+				&controllers.CategoriaNovedadController{},
+			),
+		),
 	)
 	beego.AddNamespace(ns)
 }
