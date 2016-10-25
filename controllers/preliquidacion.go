@@ -89,8 +89,8 @@ func (this *PreliquidacionController) Generar() {
 				reglas = reglasinyectadas+reglasbase
 				//fmt.Print("Reglas: "+reglas)
 				temp := golog.CargarReglas(reglas,"2016")
-				Vneto := temp[0].Valor_neto
-				Vbruto := temp[0].Valor_bruto
+				Vneto := temp[1].Valor_neto
+				Vbruto := temp[1].Valor_bruto
 				//fmt.Print(" total: "+strconv.FormatFloat(datos_contrato[i].ValorContrato, 'f', 6, 64))
 				Idpreliqu ,_ := strconv.Atoi(preliquidacion)
 				pl :=  models.Preliquidacion{Id: Idpreliqu}

@@ -6,6 +6,41 @@ import (
 
 func init() {
 
+	beego.GlobalControllerRouter["github.com/miguelramirez93/midApiTitan/controllers:ContratoGeneralController"] = append(beego.GlobalControllerRouter["github.com/miguelramirez93/midApiTitan/controllers:ContratoGeneralController"],
+		beego.ControllerComments{
+			"Post",
+			`/`,
+			[]string{"post"},
+			nil})
+
+	beego.GlobalControllerRouter["github.com/miguelramirez93/midApiTitan/controllers:ContratoGeneralController"] = append(beego.GlobalControllerRouter["github.com/miguelramirez93/midApiTitan/controllers:ContratoGeneralController"],
+		beego.ControllerComments{
+			"GetOne",
+			`/:id`,
+			[]string{"get"},
+			nil})
+
+	beego.GlobalControllerRouter["github.com/miguelramirez93/midApiTitan/controllers:ContratoGeneralController"] = append(beego.GlobalControllerRouter["github.com/miguelramirez93/midApiTitan/controllers:ContratoGeneralController"],
+		beego.ControllerComments{
+			"GetAll",
+			`/`,
+			[]string{"get"},
+			nil})
+
+	beego.GlobalControllerRouter["github.com/miguelramirez93/midApiTitan/controllers:ContratoGeneralController"] = append(beego.GlobalControllerRouter["github.com/miguelramirez93/midApiTitan/controllers:ContratoGeneralController"],
+		beego.ControllerComments{
+			"Put",
+			`/:id`,
+			[]string{"put"},
+			nil})
+
+	beego.GlobalControllerRouter["github.com/miguelramirez93/midApiTitan/controllers:ContratoGeneralController"] = append(beego.GlobalControllerRouter["github.com/miguelramirez93/midApiTitan/controllers:ContratoGeneralController"],
+		beego.ControllerComments{
+			"Delete",
+			`/:id`,
+			[]string{"delete"},
+			nil})
+
 	beego.GlobalControllerRouter["github.com/miguelramirez93/midApiTitan/controllers:DescuentosController"] = append(beego.GlobalControllerRouter["github.com/miguelramirez93/midApiTitan/controllers:DescuentosController"],
 		beego.ControllerComments{
 			"Post",

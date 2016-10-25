@@ -181,8 +181,8 @@ func (this *DetallePreliquidacionController) Informe() {
 			} else {
 
 			}
-			var novedades []models.DetalleNovedad
-			err2 := sendJson("http://"+beego.AppConfig.String("Urlcrud")+":"+beego.AppConfig.String("Portcrud")+"/"+beego.AppConfig.String("Nscrud")+"/novedades&query=DetallePreliquidacion.Id:"+id_detalle,"GET",&novedades ,nil)
+			var novedades []models.NovedadAplicada
+			err2 := sendJson("http://"+beego.AppConfig.String("Urlcrud")+":"+beego.AppConfig.String("Portcrud")+"/"+beego.AppConfig.String("Nscrud")+"/novedad_aplicada&query=DetallePreliquidacion.Id:"+id_detalle,"GET",&novedades ,nil)
 
 			if err2 != nil {
 				this.Data["json"] = err2.Error()

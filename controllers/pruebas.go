@@ -24,7 +24,7 @@ func (this* PruebasController) Preliquidacion(){
 	var valor_contrato string = ""
 	var duracion_contrato string = ""
 	var doc_contratista string = ""
-	var valor_novedad string = "0"
+	var valor_novedad string = ""
 	var t_descuento_novedad string = ""
 	if tdominio  := this.GetString("tdominio"); tdominio != "" {
 			postdominio = postdominio +"&query=Dominio.Id:"+tdominio
@@ -86,8 +86,8 @@ if err := getJson("http://"+beego.AppConfig.String("Urlruler")+":"+beego.AppConf
 	}
 	predicados = append(predicados,models.Predicado{Nombre:"valor_contrato('"+doc_contratista+"',"+valor_contrato+")."} )
 	predicados = append(predicados,models.Predicado{Nombre:"duracion_contrato('"+doc_contratista+"',"+duracion_contrato+",2016)."} )
-	if(valor_novedad != "0"){
-			predicados = append(predicados,models.Predicado{Nombre:"factor('"+doc_contratista+"',"+"descuento,"+t_descuento_novedad+",prueba,"+valor_novedad+",1)."})
+	if(valor_novedad != ""){
+			predicados = append(predicados,models.Predicado{Nombre:"factor('"+doc_contratista+"',"+"descuento,"+t_descuento_novedad+",prueba,"+valor_novedad+",2016)."})
 	}
 	var arregloReglasInyectadas = make([]string, len(predicados))
 	for i := 0; i < len(predicados); i++ {
@@ -99,7 +99,8 @@ if err := getJson("http://"+beego.AppConfig.String("Urlruler")+":"+beego.AppConf
 	reglas = reglasinyectadas+reglasbase
 	//fmt.Print("Reglas: "+reglas)
 	temp := golog.CargarReglas(reglas,"2016")
-	Vneto := temp[0].Valor_neto
+	Vneto := temp[1].Valor_neto
+	Vbruto := temp[1].Valor_bruto
 	num_doc, err := strconv.ParseInt(doc_contratista, 10, 64)
 	preliqu, err := strconv.Atoi(preliquidacion)
 	if err != nil {
@@ -108,7 +109,7 @@ if err := getJson("http://"+beego.AppConfig.String("Urlruler")+":"+beego.AppConf
 	}
 	pl :=  models.Preliquidacion{Id: preliqu}
 	persona :=  models.InformacionProveedor{NumDocumento: num_doc}
-	detallepreliqu := models.DetallePreliquidacion{Persona: &persona, Valor : Vneto, Preliquidacion : &pl }
+	detallepreliqu := models.DetallePreliquidacion{Persona: &persona, Valor : Vneto, ValorBruto : Vbruto, Preliquidacion : &pl }
 	this.Data["json"] = detallepreliqu
 	this.ServeJSON()
 }

@@ -70,6 +70,11 @@ func init() {
 				&controllers.PruebasController{},
 			),
 		),
+		beego.NSNamespace("/contrato_general",
+			beego.NSInclude(
+				&controllers.ContratoGeneralController{},
+			),
+		),
 	)
 	beego.AddNamespace(ns)
 }
