@@ -3,8 +3,8 @@ package controllers
 import (
 	"encoding/json"
 
-	models "github.com/miguelramirez93/crudApiTitan/models"
-	
+	models "github.com/miguelramirez93/midApiTitan/models"
+
 
 	"github.com/astaxie/beego"
 )

@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"github.com/astaxie/beego"
 	"github.com/jung-kurt/gofpdf"
+	//"fmt"
 )
 
 // oprations for Preliquidacion
@@ -31,7 +32,7 @@ func (this *PreliquidacionController) Generar() {
 	var postdominio string = ""
 	var preliquidacion string = ""
 	if tnomina  := this.GetString("tnomina"); tnomina != "" {
-			postnomina = postnomina +"&query=TipoContrato.Id:"+tnomina
+			postnomina = postnomina +"&query=NumeroContrato.TipoContrato.Id:"+tnomina
 	}
 	if tdominio  := this.GetString("tdominio"); tdominio != "" {
 			postdominio = postdominio +"&query=Dominio.Id:"+tdominio
@@ -43,7 +44,7 @@ func (this *PreliquidacionController) Generar() {
 		this.ServeJSON()
 	}
 	var v []models.Predicado
-	var datos_contrato []models.ContratoGeneral
+	var datos_contrato []models.ActaInicio
 	var datos_novedades []models.DetalleNovedad
 	var predicados []models.Predicado
 	var idDetaPre int
@@ -51,7 +52,7 @@ func (this *PreliquidacionController) Generar() {
 	if err := getJson("http://"+beego.AppConfig.String("Urlruler")+":"+beego.AppConfig.String("Portruler")+"/"+beego.AppConfig.String("Nsruler")+"/predicado?limit=0"+postdominio, &v); err == nil {
 		//Tomar del json el nombre de la regla y guardarlo en arregloReglas
 
-		if err := getJson("http://"+beego.AppConfig.String("Urlcrud")+":"+beego.AppConfig.String("Portcrud")+"/"+beego.AppConfig.String("Nscrud")+"/contrato_general?limit=0"+postnomina, &datos_contrato); err == nil {
+		if err := getJson("http://"+beego.AppConfig.String("Urlcrud")+":"+beego.AppConfig.String("Portcrud")+"/"+beego.AppConfig.String("Nscrud")+"/acta_inicio?limit=0"+postnomina, &datos_contrato); err == nil {
 			var reglas string = ""
 			var reglasbase string = ""
 			var reglasinyectadas string = ""
@@ -68,17 +69,17 @@ func (this *PreliquidacionController) Generar() {
 
 			for i := 0; i < len(datos_contrato); i++ {
 				//solicitud de informacion de novedades de cada empleado si esta activa la novedad
-				if err := getJson("http://"+beego.AppConfig.String("Urlcrud")+":"+beego.AppConfig.String("Portcrud")+"/"+beego.AppConfig.String("Nscrud")+"/detalle_novedad?limit=0&query=Estado:Activo,Persona:"+strconv.FormatInt(datos_contrato[i].Contratista.NumDocumento,10), &datos_novedades); err == nil {
+				if err := getJson("http://"+beego.AppConfig.String("Urlcrud")+":"+beego.AppConfig.String("Portcrud")+"/"+beego.AppConfig.String("Nscrud")+"/detalle_novedad?limit=0&query=Estado:Activo,Persona:"+strconv.FormatInt(datos_contrato[i].NumeroContrato.Contratista.NumDocumento,10), &datos_novedades); err == nil {
 						if(datos_novedades != nil){
-								predicados = append(predicados,models.Predicado{Nombre:"factor('"+datos_contrato[i].Contratista.NomProveedor+"',"+"descuento,"+datos_novedades[0].Novedad.Naturaleza+",'"+datos_novedades[0].Novedad.Nombre+"',"+strconv.FormatFloat(datos_novedades[0].Valor, 'f', -1, 64)+","+strconv.Itoa(datos_novedades[0].Vigencia)+")."} )
+								predicados = append(predicados,models.Predicado{Nombre:"factor('"+datos_contrato[i].NumeroContrato.Contratista.NomProveedor+"',"+"descuento,"+datos_novedades[0].Novedad.Naturaleza+",'"+datos_novedades[0].Novedad.Nombre+"',"+strconv.FormatFloat(datos_novedades[0].Valor, 'f', -1, 64)+","+strconv.Itoa(datos_novedades[0].Vigencia)+")."} )
 							} //regla de descuentos
 				}
 
-				a,m,d := diff(datos_contrato[i].FechaInicio,datos_contrato[i].FechaFinal)
+				a,m,d := diff(datos_contrato[i].FechaInicio,datos_contrato[i].FechaFin)
 				var meses_contrato float64
 				meses_contrato = (float64(a*12))+float64(m)+(float64(d)/30)
-				predicados = append(predicados,models.Predicado{Nombre:"valor_contrato('"+datos_contrato[i].Contratista.NomProveedor+"',"+datos_contrato[i].ValorContrato+")."} )
-				predicados = append(predicados,models.Predicado{Nombre:"duracion_contrato('"+datos_contrato[i].Contratista.NomProveedor+"',"+strconv.FormatFloat(meses_contrato, 'f', -1, 64)+",2016)."} )
+				predicados = append(predicados,models.Predicado{Nombre:"valor_contrato('"+datos_contrato[i].NumeroContrato.Contratista.NomProveedor+"',"+datos_contrato[i].NumeroContrato.ValorContrato+")."} )
+				predicados = append(predicados,models.Predicado{Nombre:"duracion_contrato('"+datos_contrato[i].NumeroContrato.Contratista.NomProveedor+"',"+strconv.FormatFloat(meses_contrato, 'f', -1, 64)+",2016)."} )
 				var arregloReglasInyectadas = make([]string, len(predicados))
 				for i := 0; i < len(predicados); i++ {
 					arregloReglasInyectadas[i] = predicados[i].Nombre
@@ -87,14 +88,14 @@ func (this *PreliquidacionController) Generar() {
 					reglasinyectadas = reglasinyectadas + arregloReglasInyectadas[i]
 				}
 				reglas = reglasinyectadas+reglasbase
-				//fmt.Print("Reglas: "+reglas)
+				//fmt.Println("Reglas: "+reglas)
 				temp := golog.CargarReglas(reglas,"2016")
 				Vneto := temp[1].Valor_neto
 				Vbruto := temp[1].Valor_bruto
 				//fmt.Print(" total: "+strconv.FormatFloat(datos_contrato[i].ValorContrato, 'f', 6, 64))
 				Idpreliqu ,_ := strconv.Atoi(preliquidacion)
 				pl :=  models.Preliquidacion{Id: Idpreliqu}
-				persona :=  models.InformacionProveedor{NumDocumento:datos_contrato[i].Contratista.NumDocumento}
+				persona :=  models.InformacionProveedor{NumDocumento:datos_contrato[i].NumeroContrato.Contratista.NumDocumento}
 				detallepreliqu := models.DetallePreliquidacion{Persona: &persona, Valor : Vneto, ValorBruto : Vbruto , Preliquidacion : &pl }
 				if err := sendJson("http://"+beego.AppConfig.String("Urlcrud")+":"+beego.AppConfig.String("Portcrud")+"/"+beego.AppConfig.String("Nscrud")+"/detalle_preliquidacion","POST",&idDetaPre ,&detallepreliqu); err == nil {
 
