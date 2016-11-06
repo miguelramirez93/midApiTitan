@@ -40,7 +40,7 @@ func (this *PreliquidacionController) Generar() {
 	if tpreliquidacion  := this.GetString("preliquidacion"); tpreliquidacion != "" {
 			preliquidacion = tpreliquidacion
 	}else{
-		this.Data["json"] = map[string]interface{}{"Mensaje": "falta id de la preliquidacion"}
+		this.Data["json"] = "falta id de la preliquidacion"
 		this.ServeJSON()
 	}
 	var v []models.Predicado
@@ -101,7 +101,7 @@ func (this *PreliquidacionController) Generar() {
 
 				}else{
 					beego.Debug("error: ", err)
-					this.Data["json"] = map[string]interface{}{"Mensaje": "error al guaradar el detalle"}
+					this.Data["json"] = "error al guaradar el detalle"
 					this.ServeJSON()
 				}
 				for _, descuentos := range *temp[0].Descuentos {
@@ -110,7 +110,7 @@ func (this *PreliquidacionController) Generar() {
 
 					}else{
 						beego.Debug("error: ", err)
-						this.Data["json"] = map[string]interface{}{"Mensaje": "error al guaradar descuentos"}
+						this.Data["json"] = "error al guaradar descuentos"
 						this.ServeJSON()
 					}
 			  }
@@ -121,7 +121,7 @@ func (this *PreliquidacionController) Generar() {
 
 						}else{
 							beego.Debug("error: ", err)
-							this.Data["json"] = map[string]interface{}{"Mensaje": "error al guaradar descuentos"}
+							this.Data["json"] =  "error al guaradar descuentos"
 							this.ServeJSON()
 						}
 					}
@@ -131,17 +131,17 @@ func (this *PreliquidacionController) Generar() {
 				datos_novedades = nil
 				reglasinyectadas = ""
 			}
-			this.Data["json"] = map[string]interface{}{"Mensaje": "Preliquidacion generada correctamente"}
+			this.Data["json"] =  "Preliquidacion generada correctamente"
 			this.ServeJSON()
 		} else {
 			beego.Debug("error: ", err)
-			this.Data["json"] = map[string]interface{}{"Mensaje": "no se pudo generar la preliquidacion api crud no encontrado"}
+			this.Data["json"] =  "no se pudo generar la preliquidacion api crud no encontrado"
 			this.ServeJSON()
 		}
 
 	} else {
 		beego.Debug("error: ", err)
-		this.Data["json"] = map[string]interface{}{"Mensaje": "no se pudo generar la preliquidacion api ruler no encontrado"}
+		this.Data["json"] =  "no se pudo generar la preliquidacion api ruler no encontrado"
 		this.ServeJSON()
 	}
 }

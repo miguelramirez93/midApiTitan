@@ -9,11 +9,16 @@ import (
 
 func main() {
 	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
-		AllowOrigins:     []string{"*"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Authorization", "Access-Control-Allow-Origin"},
-		ExposeHeaders:    []string{"Content-Length", "Access-Control-Allow-Origin"},
-		AllowCredentials: true,
+	AllowOrigins: []string{"*"},
+	AllowMethods: []string{"PUT", "PATCH", "GET", "POST", "OPTIONS", "DELETE"},
+	AllowHeaders: []string{"Origin", "x-requested-with",
+	"content-type",
+	"accept",
+	"origin",
+	"authorization",
+	"x-csrftoken"},
+	ExposeHeaders: []string{"Content-Length"},
+	AllowCredentials: true,
 	}))
 	if beego.BConfig.RunMode == "dev" {
 		beego.BConfig.WebConfig.DirectoryIndex = true
