@@ -1,6 +1,7 @@
 package models
 
 type Respuesta struct {
+	Id	           int
 	Nombre_Cont         string
 	NumDocumento         int64
 	Valor_bruto string

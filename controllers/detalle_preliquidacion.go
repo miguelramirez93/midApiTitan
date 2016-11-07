@@ -182,13 +182,14 @@ func (this *DetallePreliquidacionController) Informe() {
 
 			}
 			var novedades []models.NovedadAplicada
-			err2 := sendJson("http://"+beego.AppConfig.String("Urlcrud")+":"+beego.AppConfig.String("Portcrud")+"/"+beego.AppConfig.String("Nscrud")+"/novedad_aplicada&query=DetallePreliquidacion.Id:"+id_detalle,"GET",&novedades ,nil)
+			err2 := sendJson("http://"+beego.AppConfig.String("Urlcrud")+":"+beego.AppConfig.String("Portcrud")+"/"+beego.AppConfig.String("Nscrud")+"/novedad_aplicada?query=DetallePreliquidacion.Id:"+id_detalle,"GET",&novedades ,nil)
 
 			if err2 != nil {
 				this.Data["json"] = err2.Error()
 			} else {
 
 			}
+			respuesta[i].Id = detalle_preliquidacion[i].Id
 			respuesta[i].NumDocumento = detalle_preliquidacion[i].Persona.NumDocumento
 			respuesta[i].Nombre_Cont= detalle_preliquidacion[i].Persona.NomProveedor
 			respuesta[i].Valor_bruto= detalle_preliquidacion[i].ValorBruto

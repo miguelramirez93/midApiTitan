@@ -30,6 +30,7 @@ func (c *PreliquidacionController) URLMapping() {
 func (this *PreliquidacionController) Generar() {
 	var postnomina string = ""
 	var postdominio string = ""
+	var postperiodo string = ""
 	var preliquidacion string = ""
 	if tnomina  := this.GetString("tnomina"); tnomina != "" {
 			postnomina = postnomina +"&query=NumeroContrato.TipoContrato.Id:"+tnomina
@@ -39,6 +40,12 @@ func (this *PreliquidacionController) Generar() {
 	}
 	if tpreliquidacion  := this.GetString("preliquidacion"); tpreliquidacion != "" {
 			preliquidacion = tpreliquidacion
+	}else{
+		this.Data["json"] = "falta id de la preliquidacion"
+		this.ServeJSON()
+	}
+	if nperiodo  := this.GetString("periodo"); nperiodo != "" {
+			postperiodo = nperiodo
 	}else{
 		this.Data["json"] = "falta id de la preliquidacion"
 		this.ServeJSON()
@@ -79,7 +86,7 @@ func (this *PreliquidacionController) Generar() {
 				var meses_contrato float64
 				meses_contrato = (float64(a*12))+float64(m)+(float64(d)/30)
 				predicados = append(predicados,models.Predicado{Nombre:"valor_contrato('"+datos_contrato[i].NumeroContrato.Contratista.NomProveedor+"',"+datos_contrato[i].NumeroContrato.ValorContrato+")."} )
-				predicados = append(predicados,models.Predicado{Nombre:"duracion_contrato('"+datos_contrato[i].NumeroContrato.Contratista.NomProveedor+"',"+strconv.FormatFloat(meses_contrato, 'f', -1, 64)+",2016)."} )
+				predicados = append(predicados,models.Predicado{Nombre:"duracion_contrato('"+datos_contrato[i].NumeroContrato.Contratista.NomProveedor+"',"+strconv.FormatFloat(meses_contrato, 'f', -1, 64)+","+postperiodo+")."} )
 				var arregloReglasInyectadas = make([]string, len(predicados))
 				for i := 0; i < len(predicados); i++ {
 					arregloReglasInyectadas[i] = predicados[i].Nombre
